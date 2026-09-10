@@ -7,11 +7,10 @@ and is rasterized here via Qt's own SVG renderer. Requires Pillow and PySide6
 (both already dev/runtime dependencies of this project).
 """
 
-import random
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 from PySide6.QtGui import QImage, QPainter
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import QApplication
@@ -99,34 +98,18 @@ def _glass_card(w: int, h: int, radius: int) -> Image.Image:
     card = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(card)
     draw.rounded_rectangle(
-        [0, 0, w - 1, h - 1], radius=radius, fill=(255, 255, 255, 18)
+        [0, 0, w - 1, h - 1], radius=radius, fill=(255, 255, 255, 26)
     )
     draw.rounded_rectangle(
-        [0, 0, w - 1, h - 1], radius=radius, outline=(255, 255, 255, 40), width=1
+        [0, 0, w - 1, h - 1], radius=radius, outline=(255, 255, 255, 60), width=1
     )
     return card
 
 
-def _gradient_text(
-    draw_size: tuple, text: str, font: ImageFont.FreeTypeFont, colors: tuple
-) -> Image.Image:
-    """Render text filled with a horizontal gradient, for a premium accent title."""
-    w, h = draw_size
-    mask = Image.new("L", (w, h), 0)
-    mdraw = ImageDraw.Draw(mask)
-    mdraw.text((0, 0), text, font=font, fill=255)
-
-    gradient = _vertical_gradient(w, h, colors[0], colors[1])
-    # horizontal gradient: rotate a vertical one
-    gradient = _vertical_gradient(h, w, colors[0], colors[1]).rotate(-90, expand=True)
-    gradient = gradient.resize((w, h))
-
-    out = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    out.paste(gradient, (0, 0), mask)
-    return out
-
-
-def generate_splash() -> None:
+def generate_splash_background() -> None:
+    """Background art only (aurora glow + grain + glass card) — the icon badge,
+    title, subtitle and loading spinner are drawn live by app/splash.py so the
+    splash window can actually animate and scale crisply on any DPI."""
     w, h = 480, 300
     canvas = _vertical_gradient(w, h, BG_TOP, BG_BOTTOM)
     canvas = ImageChops.screen(canvas, _aurora_layer(w, h))
@@ -135,64 +118,21 @@ def generate_splash() -> None:
     grain = _grain(w, h)
     canvas = Image.alpha_composite(canvas, grain)
 
-    # glass card behind the text block
-    card_w, card_h = 360, 108
-    card = _glass_card(card_w, card_h, radius=20)
-    canvas.alpha_composite(card, ((w - card_w) // 2, 168))
+    # glass card behind the text block — larger radius and stronger presence
+    # than the first draft, so it reads as a deliberate rounded panel.
+    card_w, card_h = 380, 150
+    card = _glass_card(card_w, card_h, radius=28)
+    canvas.alpha_composite(card, ((w - card_w) // 2, 128))
 
-    # icon badge with a soft accent glow behind it
-    badge_size = 108
-    glow = _glow_blob(w, h, w / 2, 28 + badge_size / 2, badge_size * 0.75, badge_size * 0.75, ACCENT, 26)
+    # soft accent glow behind where the icon badge will sit
+    glow = _glow_blob(w, h, w / 2, 88, 70, 70, ACCENT, 26)
     canvas = ImageChops.screen(canvas.convert("RGB"), glow).convert("RGBA")
 
-    badge = _rasterize_svg(ICON_SVG, badge_size)
-    canvas.alpha_composite(badge, (w // 2 - badge_size // 2, 30))
-
-    draw = ImageDraw.Draw(canvas)
-
-    try:
-        title_font = ImageFont.truetype("segoeuib.ttf", 26)
-    except OSError:
-        title_font = ImageFont.load_default()
-
-    title = "Insta Music Downloader"
-    bbox = draw.textbbox((0, 0), title, font=title_font)
-    title_w, title_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
-    title_img = _gradient_text(
-        (title_w + 4, title_h + 20), title, title_font, (WHITE, ACCENT_LIGHT)
-    )
-    canvas.alpha_composite(title_img, ((w - title_w) // 2 - 2, 190))
-
-    try:
-        small_font = ImageFont.truetype("segoeui.ttf", 13)
-    except OSError:
-        small_font = ImageFont.load_default()
-
-    subtitle = "Загрузка..."
-    bbox2 = draw.textbbox((0, 0), subtitle, font=small_font)
-    subtitle_w = bbox2[2] - bbox2[0]
-    draw.text(
-        ((w - subtitle_w) / 2, 232), subtitle, fill=(168, 166, 190, 255), font=small_font
-    )
-
-    # static three-dot loader accent beneath the subtitle
-    dot_r = 3
-    dot_gap = 16
-    dot_y = 256
-    start_x = w / 2 - dot_gap
-    for i in range(3):
-        cx = start_x + i * dot_gap
-        opacity = 255 if i == 1 else 130
-        draw.ellipse(
-            [cx - dot_r, dot_y - dot_r, cx + dot_r, dot_y + dot_r],
-            fill=(*ACCENT_LIGHT, opacity),
-        )
-
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    canvas.convert("RGB").save(ASSETS_DIR / "splash.png")
-    print(f"wrote {ASSETS_DIR / 'splash.png'}")
+    canvas.save(ASSETS_DIR / "splash_bg.png")
+    print(f"wrote {ASSETS_DIR / 'splash_bg.png'}")
 
 
 if __name__ == "__main__":
     generate_icon()
-    generate_splash()
+    generate_splash_background()
