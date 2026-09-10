@@ -8,7 +8,7 @@ from qfluentwidgets import Theme, setTheme, setThemeColor
 
 from app.ffmpeg_locator import locate_ffmpeg
 from app.gui import ACCENT_COLOR, MainWindow
-from app.splash import SplashScreen
+from app.splash import SplashScreen, target_screen
 
 # Keep a module-level reference so the window isn't garbage-collected once
 # _start()'s local variable goes out of scope.
@@ -31,6 +31,10 @@ def _start(app: QApplication, splash: SplashScreen) -> None:
         return
 
     _window = MainWindow(ffmpeg_path)
+    screen_center = target_screen().availableGeometry().center()
+    frame = _window.frameGeometry()
+    frame.moveCenter(screen_center)
+    _window.move(frame.topLeft())
     _window.show()
     splash.close()
 

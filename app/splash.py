@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QGuiApplication, QIcon, QPainter, QPainterPath, QPixmap
+from PySide6.QtGui import QCursor, QGuiApplication, QIcon, QPainter, QPainterPath, QPixmap, QScreen
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from qfluentwidgets import IndeterminateProgressRing
 
@@ -24,6 +24,14 @@ def _asset_dir() -> Path:
     if getattr(sys, "frozen", False):
         return Path(sys._MEIPASS) / "icon"
     return Path(__file__).resolve().parent / "assets"
+
+
+def target_screen() -> QScreen:
+    """The screen the user is currently on, so the splash and the main window
+    both land on the same monitor instead of drifting to whichever one Qt's
+    default top-level window placement happens to pick."""
+    screen = QGuiApplication.screenAt(QCursor.pos())
+    return screen if screen is not None else QGuiApplication.primaryScreen()
 
 
 class SplashScreen(QWidget):
@@ -73,7 +81,7 @@ class SplashScreen(QWidget):
         layout.addStretch(1)
 
     def _center_on_screen(self) -> None:
-        screen_center = QGuiApplication.primaryScreen().geometry().center()
+        screen_center = target_screen().geometry().center()
         self.move(screen_center.x() - WIDTH // 2, screen_center.y() - HEIGHT // 2)
 
     def paintEvent(self, event) -> None:  # noqa: N802 (Qt override)
