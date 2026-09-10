@@ -12,6 +12,7 @@ if (-not (Test-Path $FfmpegExe)) {
     python scripts\fetch_ffmpeg.py
 }
 
+$IconSvg = Join-Path $ProjectRoot "app\assets\icon.svg"
 $IconIco = Join-Path $ProjectRoot "app\assets\icon.ico"
 $SplashPng = Join-Path $ProjectRoot "app\assets\splash.png"
 if (-not (Test-Path $IconIco) -or -not (Test-Path $SplashPng)) {
@@ -26,6 +27,7 @@ pyinstaller --name InstaMusicDownloader `
     --splash "$SplashPng" `
     --add-binary "$FfmpegExe;ffmpeg" `
     --add-data "$IconIco;icon" `
+    --add-data "$IconSvg;icon" `
     app\main.py
 
 Write-Host "Build complete: dist\InstaMusicDownloader.exe"

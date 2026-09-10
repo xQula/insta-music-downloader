@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9C90FF"/>
+      <stop offset="0.55" stop-color="#7C6FF0"/>
+      <stop offset="1" stop-color="#5849D6"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="128" y1="0" x2="128" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="round">
+      <rect x="0" y="0" width="256" height="256" rx="56" ry="56"/>
+    </clipPath>
+  </defs>
+
+  <rect x="0" y="0" width="256" height="256" rx="56" ry="56" fill="url(#bg)"/>
+  <g clip-path="url(#round)">
+    <ellipse cx="128" cy="10" rx="150" ry="90" fill="url(#sheen)"/>
+  </g>
+
+  <!-- download arrow -->
+  <rect x="102" y="56" width="24" height="82" rx="12" fill="#FFFFFF"/>
+  <path d="M70 118 L158 118 L114 168 Z" fill="#FFFFFF"/>
+
+  <!-- music note, tucked into the arrowhead -->
+  <circle cx="146" cy="190" r="21" fill="#FFFFFF"/>
+  <rect x="163" y="112" width="12" height="80" rx="6" fill="#FFFFFF"/>
+  <path d="M175 112 C 200 118 206 138 194 152 C 195 138 186 128 175 126 Z" fill="#FFFFFF"/>
+</svg>

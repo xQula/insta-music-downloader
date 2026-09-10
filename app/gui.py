@@ -61,12 +61,18 @@ _row_ids = itertools.count(1)
 
 
 def _locate_icon() -> str | None:
+    """Prefer the vector icon.svg (crisp at any titlebar/taskbar DPI); fall back
+    to icon.ico, which is also what Windows requires for the .exe resource."""
     if getattr(sys, "frozen", False):
-        bundled = Path(sys._MEIPASS) / "icon" / "icon.ico"
-        return str(bundled) if bundled.exists() else None
+        icon_dir = Path(sys._MEIPASS) / "icon"
+    else:
+        icon_dir = Path(__file__).resolve().parent / "assets"
 
-    dev_local = Path(__file__).resolve().parent / "assets" / "icon.ico"
-    return str(dev_local) if dev_local.exists() else None
+    for name in ("icon.svg", "icon.ico"):
+        candidate = icon_dir / name
+        if candidate.exists():
+            return str(candidate)
+    return None
 
 
 class StatusPill(QLabel):
