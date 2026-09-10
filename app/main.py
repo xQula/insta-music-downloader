@@ -15,7 +15,7 @@ from app.splash import SplashScreen, target_screen
 _window = None
 
 
-def _start(app: QApplication, splash: SplashScreen) -> None:
+def _start(app: QApplication, splash: SplashScreen, screen) -> None:
     global _window
 
     ffmpeg_path = locate_ffmpeg()
@@ -31,7 +31,7 @@ def _start(app: QApplication, splash: SplashScreen) -> None:
         return
 
     _window = MainWindow(ffmpeg_path)
-    screen_center = target_screen().availableGeometry().center()
+    screen_center = screen.availableGeometry().center()
     frame = _window.frameGeometry()
     frame.moveCenter(screen_center)
     _window.move(frame.topLeft())
@@ -44,11 +44,12 @@ def main() -> None:
     setTheme(Theme.AUTO)
     setThemeColor(ACCENT_COLOR)
 
-    splash = SplashScreen()
+    screen = target_screen()
+    splash = SplashScreen(screen)
     splash.show()
     app.processEvents()
 
-    QTimer.singleShot(50, lambda: _start(app, splash))
+    QTimer.singleShot(50, lambda: _start(app, splash, screen))
     sys.exit(app.exec())
 
 

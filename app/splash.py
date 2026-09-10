@@ -35,8 +35,9 @@ def target_screen() -> QScreen:
 
 
 class SplashScreen(QWidget):
-    def __init__(self) -> None:
+    def __init__(self, screen: QScreen | None = None) -> None:
         super().__init__()
+        self.screen_ = screen if screen is not None else target_screen()
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setFixedSize(WIDTH, HEIGHT)
@@ -81,7 +82,7 @@ class SplashScreen(QWidget):
         layout.addStretch(1)
 
     def _center_on_screen(self) -> None:
-        screen_center = target_screen().geometry().center()
+        screen_center = self.screen_.geometry().center()
         self.move(screen_center.x() - WIDTH // 2, screen_center.y() - HEIGHT // 2)
 
     def paintEvent(self, event) -> None:  # noqa: N802 (Qt override)
