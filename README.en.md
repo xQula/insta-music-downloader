@@ -57,6 +57,11 @@ python -m app.main
 `.ps1` scripts is disabled by default security policy. If scripts are
 allowed on your machine, you can call `.\scripts\build.ps1` directly.)
 
+The build script creates an isolated `.venv` and installs only the
+dependencies from `requirements.txt` into it — this keeps PyInstaller from
+sweeping unrelated packages that might be installed in your system Python
+into the exe.
+
 Build output: the `dist\InstaMusicDownloader\` folder (an `--onedir`
 build) — copy and move it as a whole, and run
 `dist\InstaMusicDownloader\InstaMusicDownloader.exe` from inside it. This
