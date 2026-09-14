@@ -4,16 +4,18 @@ import shutil
 import sys
 from pathlib import Path
 
+_FFMPEG_NAME = "ffmpeg.exe" if sys.platform == "win32" else "ffmpeg"
+
 
 def locate_ffmpeg() -> str | None:
     if getattr(sys, "frozen", False):
-        bundled = Path(sys._MEIPASS) / "ffmpeg" / "ffmpeg.exe"
+        bundled = Path(sys._MEIPASS) / "ffmpeg" / _FFMPEG_NAME
         if bundled.exists():
             return str(bundled)
         return None
 
     project_root = Path(__file__).resolve().parent.parent
-    dev_local = project_root / "vendor" / "ffmpeg" / "ffmpeg.exe"
+    dev_local = project_root / "vendor" / "ffmpeg" / _FFMPEG_NAME
     if dev_local.exists():
         return str(dev_local)
 

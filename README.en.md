@@ -68,10 +68,40 @@ build) — copy and move it as a whole, and run
 way the app starts almost instantly and can show an animated loading
 screen (no unpacking to a temp folder, unlike `--onefile`).
 
+## macOS
+
+Apple Silicon (arm64) builds are supported, macOS 12+. A pre-built archive
+(once one exists) lives on the same
+[Releases](https://github.com/xQula/insta-music-downloader/releases) page —
+it ships with a first-launch instructions file right next to the `.app`.
+
+The app isn't signed with an Apple Developer ID (a paid subscription), so a
+normal double-click will make macOS show "Apple could not verify that this
+app is free of malware". The simplest way to open it:
+
+1. Double-click the `.app` — the warning appears. Dismiss it.
+2. Open **System Settings → Privacy & Security**.
+3. Scroll down to the "Security" section — it will show a message that the
+   app was blocked, with an **"Open Anyway"** button next to it.
+4. Click it, then confirm in the dialog. You only need to do this once, on
+   first launch.
+
+To build it yourself (requires [Homebrew](https://brew.sh)):
+
+```bash
+./scripts/build_macos.sh
+```
+
+The script creates its own `.venv`, installs ffmpeg via Homebrew, and
+produces `dist/InstaMusicDownloader.app`. The build is actually exercised in
+CI — see `.github/workflows/build-macos.yml` (runs on pushing a `v*` tag, or
+manually from the Actions tab).
+
 ## Where settings are stored
 
 The last selected folder is saved to
-`%APPDATA%\InstaMusicDownloader\config.json`.
+`%APPDATA%\InstaMusicDownloader\config.json` on Windows, and to
+`~/Library/Application Support/InstaMusicDownloader/config.json` on macOS.
 
 ## Limitations
 

@@ -2,6 +2,7 @@
 
 import json
 import os
+import sys
 from pathlib import Path
 
 APP_DIR_NAME = "InstaMusicDownloader"
@@ -9,8 +10,11 @@ CONFIG_FILENAME = "config.json"
 
 
 def _config_path() -> Path:
-    appdata = os.environ.get("APPDATA", str(Path.home()))
-    return Path(appdata) / APP_DIR_NAME / CONFIG_FILENAME
+    if sys.platform == "darwin":
+        base = Path.home() / "Library" / "Application Support"
+    else:
+        base = Path(os.environ.get("APPDATA", str(Path.home())))
+    return base / APP_DIR_NAME / CONFIG_FILENAME
 
 
 def load_config() -> dict:

@@ -7,6 +7,8 @@ and is rasterized here via Qt's own SVG renderer. Requires Pillow and PySide6
 (both already dev/runtime dependencies of this project).
 """
 
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -50,6 +52,39 @@ def generate_icon() -> None:
         sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)],
     )
     print(f"wrote {ASSETS_DIR / 'icon.ico'}")
+
+
+def generate_icns() -> None:
+    """macOS app bundle icon. Only runs on macOS since it shells out to the
+    system's iconutil (there's no cross-platform way to write a valid .icns)."""
+    iconset_dir = ASSETS_DIR / "icon.iconset"
+    if iconset_dir.exists():
+        shutil.rmtree(iconset_dir)
+    iconset_dir.mkdir(parents=True)
+
+    # (pixel size, iconset filename) pairs iconutil requires.
+    sizes = [
+        (16, "icon_16x16.png"),
+        (32, "icon_16x16@2x.png"),
+        (32, "icon_32x32.png"),
+        (64, "icon_32x32@2x.png"),
+        (128, "icon_128x128.png"),
+        (256, "icon_128x128@2x.png"),
+        (256, "icon_256x256.png"),
+        (512, "icon_256x256@2x.png"),
+        (512, "icon_512x512.png"),
+        (1024, "icon_512x512@2x.png"),
+    ]
+    for size, filename in sizes:
+        _rasterize_svg(ICON_SVG, size).save(iconset_dir / filename)
+
+    icns_path = ASSETS_DIR / "icon.icns"
+    subprocess.run(
+        ["iconutil", "-c", "icns", str(iconset_dir), "-o", str(icns_path)],
+        check=True,
+    )
+    shutil.rmtree(iconset_dir)
+    print(f"wrote {icns_path}")
 
 
 def _vertical_gradient(w: int, h: int, top: tuple, bottom: tuple) -> Image.Image:
@@ -136,3 +171,5 @@ def generate_splash_background() -> None:
 if __name__ == "__main__":
     generate_icon()
     generate_splash_background()
+    if sys.platform == "darwin":
+        generate_icns()
