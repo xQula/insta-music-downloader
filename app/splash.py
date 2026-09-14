@@ -18,6 +18,7 @@ from qfluentwidgets import IndeterminateProgressRing
 
 WIDTH, HEIGHT = 480, 300
 CORNER_RADIUS = 28
+_FONT_FAMILY = "Segoe UI" if sys.platform == "win32" else "-apple-system"
 
 
 def _asset_dir() -> Path:
@@ -65,11 +66,11 @@ class SplashScreen(QWidget):
         layout.addSpacing(16)
 
         title = QLabel("Insta Music Downloader", self)
-        title.setStyleSheet('color: white; font: 600 18pt "Segoe UI";')
+        title.setStyleSheet(f'color: white; font: 600 18pt "{_FONT_FAMILY}";')
         layout.addWidget(title, 0, Qt.AlignHCenter)
 
         subtitle = QLabel("Загрузка...", self)
-        subtitle.setStyleSheet('color: #A8A6BE; font: 10pt "Segoe UI";')
+        subtitle.setStyleSheet(f'color: #A8A6BE; font: 10pt "{_FONT_FAMILY}";')
         layout.addWidget(subtitle, 0, Qt.AlignHCenter)
 
         layout.addSpacing(10)

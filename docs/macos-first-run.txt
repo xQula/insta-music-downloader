@@ -1,0 +1,46 @@
+InstaMusicDownloader — первый запуск на macOS / first launch on macOS
+======================================================================
+
+РУССКИЙ
+
+Это приложение не подписано сертификатом Apple Developer ID (это платная
+подписка, $99/год), поэтому macOS не может подтвердить издателя и при
+обычном двойном клике покажет предупреждение "Apple не удалось
+подтвердить, что файл не содержит вредоносного ПО".
+
+Самый простой способ:
+
+1. Дважды кликните по InstaMusicDownloader.app — появится предупреждение
+   «Apple не удалось подтвердить, что файл не содержит вредоносного ПО».
+   Закройте предупреждение.
+2. Откройте Системные настройки → Конфиденциальность и безопасность.
+3. Прокрутите вниз до раздела «Безопасность» — там появится сообщение о
+   том, что запуск InstaMusicDownloader был заблокирован, а рядом кнопка
+   «Открыть в любом случае».
+4. Нажмите её и подтвердите запуск в появившемся диалоге. Это нужно
+   сделать только один раз, при первом запуске.
+
+Исходный код проекта открыт и его можно посмотреть перед запуском:
+https://github.com/xQula/insta-music-downloader
+
+
+ENGLISH
+
+This app isn't signed with an Apple Developer ID certificate (a paid,
+$99/year subscription), so macOS can't verify the publisher and will show
+"Apple could not verify that this app is free of malware" on a normal
+double-click.
+
+The simplest way:
+
+1. Double-click InstaMusicDownloader.app — macOS will show "Apple could
+   not verify that this app is free of malware". Dismiss the warning.
+2. Open System Settings → Privacy & Security.
+3. Scroll down to the "Security" section — it will show a message that
+   InstaMusicDownloader was blocked, with an "Open Anyway" button next
+   to it.
+4. Click it, then confirm in the dialog that appears. You only need to
+   do this once, on first launch.
+
+The project's source code is open and can be reviewed before running it:
+https://github.com/xQula/insta-music-downloader

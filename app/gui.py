@@ -3,6 +3,7 @@
 import itertools
 import os
 import queue
+import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -249,8 +250,14 @@ class MainWindow(FluentWidget):
 
     def _on_open_folder_clicked(self) -> None:
         folder = self.config_data.get("last_dir", "").strip()
-        if folder and os.path.isdir(folder):
+        if not folder or not os.path.isdir(folder):
+            return
+        if sys.platform == "win32":
             os.startfile(folder)
+        elif sys.platform == "darwin":
+            subprocess.run(["open", folder])
+        else:
+            subprocess.run(["xdg-open", folder])
 
     def add_row(self) -> None:
         row_id = next(_row_ids)
